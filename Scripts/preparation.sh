@@ -35,12 +35,23 @@ echo "Installation de la dernière version de Docker..."
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+# Installation de Portainer
+echo "Installation de Portainer..."
+docker volume create portainer_data
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+
+# Installation de Tailscale
+echo "Installation de Tailscale..."
+curl -fsSL https://tailscale.com/install.sh | sh
+
+
 # Terminé
 
 echo "#=====================#"
 echo "Préparation terminée !"
 echo "#=====================#"
 
-echo "Pour tester l'installation, exécutez la commande suivante :"
-echo "sudo docker run hello-world"
+echo "Se connecter à tailscale avec la commande :"
+echo "sudo tailscale up"
+echo "Interface de Portainer sur port 9443 !"
 
