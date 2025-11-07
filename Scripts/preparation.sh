@@ -45,13 +45,13 @@ echo "Installation de Tailscale..."
 curl -fsSL https://tailscale.com/install.sh | sh
 
 
+
+
 # Terminé
 
 echo "#=====================#"
 echo "Préparation terminée !"
 echo "#=====================#"
 
-echo "Se connecter à tailscale avec la commande :"
-echo "sudo tailscale up"
 echo "Interface de Portainer sur port 9443 !"
 
