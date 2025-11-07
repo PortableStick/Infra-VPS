@@ -3,6 +3,9 @@ version: "3"
 networks:
   gitea:
     external: false
+  frontend:
+    name: frontend
+    external: true
 
 services:
   # Gitea
@@ -17,9 +20,17 @@ services:
       - GITEA__database__NAME=gitea
       - GITEA__database__USER=gitea
       - GITEA__database__PASSWD=gitea
-    restart: always
     networks:
+      - frontend
       - gitea
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.immich-server.rule=Host(`gitea.lucasmasse.net`)"
+        - "traefik.http.routers.immich-server.entrypoints=websecure"
+        - "traefik.http.routers.immich-server.tls=true"
+        - "traefik.http.routers.immich-server.tls.certresolver=letencrypt"
+        - "traefik.http.services.immich-server.loadbalancer.server.port=3000"
+    restart: always
     volumes:
       - ./gitea:/data
       - /etc/timezone:/etc/timezone:ro

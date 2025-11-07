@@ -1,0 +1,49 @@
+services:
+  traefik:
+    image: traefik
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=Europe/Paris
+      - CF_API_EMAIL=${CF_API_EMAIL}
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
+    networks:
+      - frontend
+    ports:
+      - 80:80 # Port HTTP
+      - 443:443 # Port HTTPS
+      - 8080:8080 # Accès dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${TRAEFIK_FILES}/traefik.yml:/traefik.yml:ro
+      - ${TRAEFIK_FILES}/certs:/certs
+      - ${TRAEFIK_FILES}/logs:/var/log/traefik
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik-dashboard.lucasmasse.net`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"  # Utiliser ` et non '
+        - "traefik.http.routers.dashboard.entrypoints=websecure"
+        - "traefik.http.routers.dashboard.tls=true"
+        - "traefik.http.routers.dashboard.tls.certresolver=letencrypt"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.middlewares=auth"
+        - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+
+  whoami:
+    container_name: whoami-traefik
+    image: traefik/whoami
+    networks:
+      - frontend
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.lucasmasse.net`)"
+        - "traefik.http.routers.whoami.entrypoints=websecure"
+        - "traefik.http.routers.whoami.tls=true"
+        - "traefik.http.routers.whoami.tls.certresolver=letencrypt"
+        - "traefik.http.services.whoami.loadbalancer.server.port=80"
+
+networks:
+  frontend:
+    name: frontend
