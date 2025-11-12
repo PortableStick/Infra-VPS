@@ -100,4 +100,5 @@ services:
       - server
     networks:
       - gitea_services
+      - frontend
     
