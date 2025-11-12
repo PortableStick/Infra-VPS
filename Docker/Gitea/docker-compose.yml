@@ -64,10 +64,30 @@ services:
       GITEA_RUNNER_REGISTRATION_TOKEN: "${REGISTRATION_TOKEN}"
       GITEA_RUNNER_NAME: "${RUNNER_NAME}"
       GITEA_RUNNER_LABELS: "${RUNNER_LABELS}"
-    networks:
-      - frontend
-      - gitea
     volumes:
       - /data/portainer/gitea/runner/config.yaml:/config.yaml
       - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - frontend
+
+  pages-server:
+    image: codeberg.org/codeberg/pages-server:latest
+    container_name: pages-server
+    restart: unless-stopped
+    environment:
+      - PAGES_DOMAIN=pages.lucasmasse.net
+      - GITEA_ROOT=https://gitea.lucasmasse.net
+      - GITEA_API_TOKEN=${GITEA_API_TOKEN}
+      - HOST=0.0.0.0
+      - PORT=3001
+      - LOG_LEVEL=info
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pages.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.pages.lucasmasse.net`) || Host(`pages.lucasmasse.net`)"
+      - "traefik.http.routers.pages.entrypoints=websecure"
+      - "traefik.http.routers.pages.tls.certresolver=letsencrypt"
+      - "traefik.http.services.pages.loadbalancer.server.port=3001"
+    networks:
+      - frontend
+    
