@@ -32,7 +32,7 @@ services:
         - "traefik.http.services.immich-server.loadbalancer.server.port=3000"
     restart: always
     volumes:
-      - ./gitea:/data
+      - /data/portainer/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -65,6 +65,6 @@ services:
       GITEA_RUNNER_NAME: "${RUNNER_NAME}"
       GITEA_RUNNER_LABELS: "${RUNNER_LABELS}"
     volumes:
-      - ./gitea/runner/config.yaml:/config.yaml
-      - ./gitea/runner/data:/data
+      - /data/portainer/gitea/runner/config.yaml:/config.yaml
+      - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
