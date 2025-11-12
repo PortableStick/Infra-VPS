@@ -89,6 +89,7 @@ services:
       - LOG_LEVEL=info
       # Désactiver ACME
       - NO_DNS_01=true
+      - ACME_API=https://acme.mock.directory
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pages.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.pages.lucasmasse.net`) || Host(`pages.lucasmasse.net`)"
