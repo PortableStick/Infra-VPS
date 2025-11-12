@@ -55,8 +55,6 @@ services:
       - MYSQL_DATABASE=gitea
     networks:
       - gitea
-    depends_on:
-      - gitea
     volumes:
      - /data/portainer/gitea/mysql:/var/lib/mysql
 
@@ -73,6 +71,8 @@ services:
       - /data/portainer/gitea/runner/config.yaml:/config.yaml
       - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - gitea
     networks:
       - gitea_services
 
