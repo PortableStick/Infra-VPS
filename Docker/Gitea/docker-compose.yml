@@ -91,18 +91,11 @@ services:
       - NO_DNS_01=true
       - ACME_API=https://acme.mock.directory
     labels:
-      labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pages.rule=HostRegexp(`^[a-z0-9-]+\\.pages\\.lucasmasse\\.net$$`) || Host(`pages.lucasmasse.net`)"
-      - "traefik.http.routers.pages.entrypoints=websecure"
-      - "traefik.http.routers.pages.tls=true"
-      - "traefik.http.routers.pages.tls.certresolver=letsencrypt"
-      - "traefik.http.services.pages.loadbalancer.server.port=3001"      
-      - "traefik.http.routers.pages-portfolio.rule=Host(`portfolio.lucasmasse.net`)"
-      - "traefik.http.routers.pages-portfolio.entrypoints=websecure"
-      - "traefik.http.routers.pages-portfolio.tls=true"
-      - "traefik.http.routers.pages-portfolio.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.pages-portfolio.service=pages"
+      - traefik.enable=true
+      - traefik.http.routers.pages-portfolio.rule=Host(`portfolio.lucasmasse.net`)
+      - traefik.http.routers.pages-portfolio.entrypoints=websecure
+      - traefik.http.routers.pages-portfolio.tls.certresolver=letencrypt
+      - traefik.http.services.pages.loadbalancer.server.port=3001
     depends_on:
       - server
     networks:
