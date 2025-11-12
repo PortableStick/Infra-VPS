@@ -72,7 +72,7 @@ services:
       - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      - gitea
+      - server
     networks:
       - gitea_services
 
@@ -100,7 +100,7 @@ services:
       - "traefik.http.routers.pages.tls.certresolver=letsencrypt"
       - "traefik.http.services.pages.loadbalancer.server.port=3001"
     depends_on:
-      - gitea
+      - server
     networks:
       - gitea_services
     
