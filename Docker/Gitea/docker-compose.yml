@@ -54,3 +54,17 @@ services:
       - gitea
     volumes:
      - ./mysql:/var/lib/mysql
+
+  # Runner
+  runner:
+    image: docker.io/gitea/act_runner:nightly
+    environment:
+      CONFIG_FILE: /config.yaml
+      GITEA_INSTANCE_URL: "https://gitea.lucasmasse.net"
+      GITEA_RUNNER_REGISTRATION_TOKEN: "${REGISTRATION_TOKEN}"
+      GITEA_RUNNER_NAME: "${RUNNER_NAME}"
+      GITEA_RUNNER_LABELS: "${RUNNER_LABELS}"
+    volumes:
+      - ./gitea/runner/config.yaml:/config.yaml
+      - ./gitea/runner/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
