@@ -53,7 +53,7 @@ services:
     networks:
       - gitea
     volumes:
-     - ./mysql:/var/lib/mysql
+     - /data/portainer/gitea/mysql:/var/lib/mysql
 
   # Runner
   runner:
