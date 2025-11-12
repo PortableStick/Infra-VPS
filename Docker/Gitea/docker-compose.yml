@@ -86,6 +86,8 @@ services:
       # Désactiver le SSL du serveur pages (Traefik le gère)
       - ACME_API=https://acme.mock.directory  # Faux certs
       - NO_DNS_01=true  # Pas de challenge DNS
+      - ACME_API=
+      - ACME_ACCEPT_TERMS=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pages.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.pages.lucasmasse.net`) || Host(`pages.lucasmasse.net`)"
