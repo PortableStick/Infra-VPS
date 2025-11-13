@@ -85,17 +85,17 @@ services:
       - GITEA_ROOT=http://gitea:3000
       - GITEA_API_TOKEN=${GITEA_API_TOKEN}
       - HOST=0.0.0.0
-      - PORT=3001
+      - PORT=3000
       - LOG_LEVEL=info
       # Désactiver ACME
-      - NO_DNS_01=true
+      - NO_DNS_01=false
       - ACME_API=https://acme.mock.directory
     labels:
       - traefik.enable=true
       - traefik.http.routers.pages-portfolio.rule=Host(`portfolio.lucasmasse.net`)
       - traefik.http.routers.pages-portfolio.entrypoints=websecure
       - traefik.http.routers.pages-portfolio.tls.certresolver=letencrypt
-      - traefik.http.services.pages.loadbalancer.server.port=3001
+      - traefik.http.services.pages.loadbalancer.server.port=3000
     depends_on:
       - server
     networks:
