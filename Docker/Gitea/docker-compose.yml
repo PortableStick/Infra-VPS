@@ -28,11 +28,11 @@ services:
       - gitea_services
     labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.immich-server.rule=Host(`gitea.lucasmasse.net`)"
-        - "traefik.http.routers.immich-server.entrypoints=websecure"
-        - "traefik.http.routers.immich-server.tls=true"
-        - "traefik.http.routers.immich-server.tls.certresolver=letencrypt"
-        - "traefik.http.services.immich-server.loadbalancer.server.port=3000"
+        - "traefik.http.routers.gitea.rule=Host(`gitea.lucasmasse.net`)"
+        - "traefik.http.routers.gitea.entrypoints=websecure"
+        - "traefik.http.routers.gitea.tls=true"
+        - "traefik.http.routers.gitea.tls.certresolver=letencrypt"
+        - "traefik.http.services.gitea.loadbalancer.server.port=3000"
     restart: always
     volumes:
       - /data/portainer/gitea:/data
@@ -76,29 +76,22 @@ services:
     networks:
       - gitea_services
 
-  pages-server:
-    image: codeberg.org/codeberg/pages-server:latest
-    container_name: pages-server
-    restart: unless-stopped
+#$ docker run -it --rm -d -p 8080:80 --name web nginx
+
+  nginx-pages:
+    image: nginx
+    #volumes:
+    #  - ./templates:/etc/nginx/templates
     environment:
-      - PAGES_DOMAIN=portfolio.lucasmasse.net
-      - GITEA_ROOT=http://gitea:3000
-      - GITEA_API_TOKEN=${GITEA_API_TOKEN}
-      - HOST=0.0.0.0
-      - PORT=3000
-      - LOG_LEVEL=info
-      # Désactiver ACME
-      - NO_DNS_01=false
-      - ACME_API=https://acme.mock.directory
+      - NGINX_HOST=portfolio.lucasmasse.net
+      - NGINX_PORT=80
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.portfolio.rule=Host(`portfolio.lucasmasse.net`)
-      - traefik.http.routers.pages-portfolio.entrypoints=websecure
-      - traefik.http.routers.pages-portfolio.tls.certresolver=letencrypt
-      - traefik.http.services.pages.loadbalancer.server.port=3000
-    depends_on:
-      - server
-    networks:
-      - gitea_services
-      - frontend
+        - "traefik.enable=true"
+        - "traefik.http.routers.nginx-pages.rule=Host(`portfolio.lucasmasse.net`)"
+        - "traefik.http.routers.nginx-pages.entrypoints=websecure"
+        - "traefik.http.routers.nginx-pages.tls=true"
+        - "traefik.http.routers.nginx-pages.tls.certresolver=letencrypt"
+        - "traefik.http.services.nginx-pages.loadbalancer.server.port=80"
+
+
     
