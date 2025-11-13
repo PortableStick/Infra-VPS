@@ -71,7 +71,7 @@ services:
       - /data/portainer/gitea/runner/config.yaml:/config.yaml
       - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/www/quartz:/var/www/quartzs
+      - /var/www/quartz:/var/www/quartz
     depends_on:
       - server
     networks:
