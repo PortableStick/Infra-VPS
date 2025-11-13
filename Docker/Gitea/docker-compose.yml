@@ -76,14 +76,11 @@ services:
       - server
     networks:
       - gitea_services
-
-#$ docker run -it --rm -d -p 8080:80 --name web nginx
-
+      
   nginx-pages:
     image: nginx
     volumes:
-      - /data/portainer/gitea/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /data/portainer/gitea/runner/
+      - /var/www/quartz:/usr/share/nginx/html:ro
     #  - ./templates:/etc/nginx/templates
     environment:
       - NGINX_HOST=portfolio.lucasmasse.net
