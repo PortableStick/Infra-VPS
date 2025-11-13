@@ -92,6 +92,8 @@ services:
         - "traefik.http.routers.nginx-pages.tls=true"
         - "traefik.http.routers.nginx-pages.tls.certresolver=letencrypt"
         - "traefik.http.services.nginx-pages.loadbalancer.server.port=80"
+    networks:
+      - frontend
 
 
     
