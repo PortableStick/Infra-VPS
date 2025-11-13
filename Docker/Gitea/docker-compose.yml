@@ -76,10 +76,11 @@ services:
       - server
     networks:
       - gitea_services
-      
+
   nginx-pages:
     image: nginx
     volumes:
+      - /data/portainer/gitea/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
       - /var/www/quartz:/usr/share/nginx/html:ro
     #  - ./templates:/etc/nginx/templates
     environment:
