@@ -71,6 +71,7 @@ services:
       - /data/portainer/gitea/runner/config.yaml:/config.yaml
       - /data/portainer/gitea/runner/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/www/quartz:/var/www/quartzs
     depends_on:
       - server
     networks:
@@ -80,7 +81,9 @@ services:
 
   nginx-pages:
     image: nginx
-    #volumes:
+    volumes:
+      - /data/portainer/gitea/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /data/portainer/gitea/runner/
     #  - ./templates:/etc/nginx/templates
     environment:
       - NGINX_HOST=portfolio.lucasmasse.net
