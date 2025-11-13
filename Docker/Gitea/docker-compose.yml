@@ -81,7 +81,7 @@ services:
     container_name: pages-server
     restart: unless-stopped
     environment:
-      - PAGES_DOMAIN=pages.lucasmasse.net
+      - PAGES_DOMAIN=portfolio.lucasmasse.net
       - GITEA_ROOT=http://gitea:3000
       - GITEA_API_TOKEN=${GITEA_API_TOKEN}
       - HOST=0.0.0.0
@@ -92,7 +92,7 @@ services:
       - ACME_API=https://acme.mock.directory
     labels:
       - traefik.enable=true
-      - traefik.http.routers.pages-portfolio.rule=Host(`portfolio.lucasmasse.net`)
+      - traefik.http.routers.portfolio.rule=Host(`portfolio.lucasmasse.net`)
       - traefik.http.routers.pages-portfolio.entrypoints=websecure
       - traefik.http.routers.pages-portfolio.tls.certresolver=letencrypt
       - traefik.http.services.pages.loadbalancer.server.port=3000
