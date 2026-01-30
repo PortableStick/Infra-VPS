@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+  ghost:
+    image: ghost:5-alpine
+    restart: always
+    ports:
+      - 8080:2368
+    environment:
+      url: https://blog.lucasmasse.net
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: mysql
+      database__connection__database: ghost
+    volumes:
+      - /data/portainer/ghost-content:/var/lib/ghost/content
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ghost.rule=Host(`blog.lucasmasse.net`)"
+      - "traefik.http.routers.ghost.entrypoints=websecure"
+      - "traefik.http.routers.ghost.tls=true"
+      - "traefik.http.routers.ghost.tls.certresolver=letencrypt"
+      - "traefik.http.services.ghost.loadbalancer.server.port=2368"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: ghost
+    volumes:
+      - /data/portainer/ghost-db:/var/lib/mysql
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
