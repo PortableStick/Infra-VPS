@@ -22,6 +22,6 @@ services:
     volumes:
       - grav-data:/var/www/html
 
-  networks:
-    frontend:
-      name: frontend
+networks:
+   frontend:
+     name: frontend
