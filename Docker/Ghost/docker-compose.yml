@@ -8,9 +8,9 @@ services:
       url: https://blog.lucasmasse.net
       database__client: mysql
       database__connection__host: db
-      database__connection__user: ghost_user
+      database__connection__user: root
       database__connection__password: mysql
-      database__connection__database: ghost_data
+      database__connection__database: ghost
     volumes:
       - /data/portainer/ghost-content:/var/lib/ghost/content
     networks:
@@ -28,10 +28,9 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_USER: ghost_user
-      MYSQL_PASSWORD: mysql
-      MYSQL_DATABASE: ghost_data
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: ghost
+      MYSQL_ROOT_HOST: '%'
     volumes:
       - /data/portainer/ghost-db:/var/lib/mysql
     networks:
