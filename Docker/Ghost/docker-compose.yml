@@ -4,13 +4,15 @@ services:
   ghost:
     image: ghost:5-alpine
     restart: always
+    ports:
+      - 8080:2368
     environment:
       url: https://blog.lucasmasse.net
       database__client: mysql
       database__connection__host: db
-      database__connection__user: root
+      database__connection__user: ghost_user
       database__connection__password: mysql
-      database__connection__database: ghost
+      database__connection__database: ghost_data
     volumes:
       - /data/portainer/ghost-content:/var/lib/ghost/content
     networks:
@@ -28,8 +30,10 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
-      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost_user
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: ghost_data
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     volumes:
       - /data/portainer/ghost-db:/var/lib/mysql
     networks:
