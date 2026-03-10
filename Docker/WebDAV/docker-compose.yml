@@ -21,9 +21,6 @@ services:
       - "traefik.http.routers.webdav.tls=true"
       - "traefik.http.routers.webdav.tls.certresolver=letencrypt"
       - "traefik.http.services.webdav.loadbalancer.server.port=80"
-      - "traefik.http.routers.webdav.middlewares=webdav-timeout"
-      - "traefik.http.middlewares.webdav-timeout.buffering.maxRequestBodyBytes=0"
-      - "traefik.http.middlewares.webdav-timeout.buffering.memRequestBodyBytes=0"
 
 networks:
   frontend:
