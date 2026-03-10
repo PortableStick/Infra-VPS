@@ -1,14 +1,16 @@
 services:
   webdav:
-    image: ugeek/webdav:alpine
+    image: dgraziotin/nginx-webdav-nononsense:latest
     container_name: webdav
     restart: unless-stopped
     environment:
-      - USERNAME=${WEBDAV_USERNAME}
-      - PASSWORD=${WEBDAV_PASSWORD}
+      - WEBDAV_USERNAME=${WEBDAV_USERNAME}
+      - WEBDAV_PASSWORD=${WEBDAV_PASSWORD}
+      - PUID=1000
+      - PGID=1000
       - TZ=Europe/Paris
     volumes:
-      - /data/portainer/webdav:/var/lib/dav/data
+      - /data/portainer/webdav:/data
     networks:
       - frontend
     labels:
