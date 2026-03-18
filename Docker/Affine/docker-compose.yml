@@ -1,7 +1,7 @@
 services:
 
   affine:
-    image: ghcr.io/toeverything/affine:stable
+    image: ghcr.io/toeverything/affine:canary
     container_name: affine
     restart: unless-stopped
     depends_on:
@@ -41,7 +41,7 @@ services:
         max-size: "100m"
 
   affine_migration:
-    image: ghcr.io/toeverything/affine:stable
+    image: ghcr.io/toeverything/affine:canary
     container_name: affine_migration
     restart: no
     depends_on:
