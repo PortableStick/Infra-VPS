@@ -23,6 +23,7 @@ services:
       - AFFINE_ADMIN_EMAIL=${AFFINE_ADMIN_EMAIL}
       - AFFINE_ADMIN_PASSWORD=${AFFINE_ADMIN_PASSWORD}
       - AFFINE_INDEXER_ENABLED=false
+      - selfhosted=true
     networks:
       - frontend
       - affine_internal
