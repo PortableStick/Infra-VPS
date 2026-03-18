@@ -33,6 +33,7 @@ services:
       - "traefik.http.routers.affine.tls=true"
       - "traefik.http.routers.affine.tls.certresolver=letencrypt"
       - "traefik.http.services.affine.loadbalancer.server.port=3010"
+      - "traefik.docker.network=frontend"
     logging:
       driver: "json-file"
       options:
