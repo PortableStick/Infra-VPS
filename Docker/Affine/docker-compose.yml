@@ -19,7 +19,7 @@ services:
       - DATABASE_URL=postgresql://${AFFINE_DB_USER}:${AFFINE_DB_PASSWORD}@postgres:5432/${AFFINE_DB_NAME}
       - NODE_ENV=production
       - AFFINE_SERVER_EXTERNAL_URL=https://notes.lucasmasse.net
-      - AFFINE_SERVER_HTTPS=true
+      - AFFINE_SERVER_HTTPS=false
       - AFFINE_ADMIN_EMAIL=${AFFINE_ADMIN_EMAIL}
       - AFFINE_ADMIN_PASSWORD=${AFFINE_ADMIN_PASSWORD}
       - AFFINE_INDEXER_ENABLED=false
