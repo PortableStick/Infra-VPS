@@ -33,10 +33,6 @@ services:
       - "traefik.http.routers.affine.tls=true"
       - "traefik.http.routers.affine.tls.certresolver=letencrypt"
       - "traefik.http.services.affine.loadbalancer.server.port=3010"
-      # WebSocket support
-      - "traefik.http.middlewares.affine-ws.headers.customrequestheaders.Upgrade=websocket"
-      - "traefik.http.middlewares.affine-ws.headers.customrequestheaders.Connection=Upgrade"
-      - "traefik.http.routers.affine.middlewares=affine-ws"
     logging:
       driver: "json-file"
       options:
