@@ -6,6 +6,8 @@ networks:
   frontend:
     name: frontend
     external: true
+  gitea_services:
+    external: false
 
 services:
   # Gitea
@@ -23,16 +25,18 @@ services:
     networks:
       - frontend
       - gitea
+      - gitea_services
     labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.immich-server.rule=Host(`gitea.lucasmasse.net`)"
-        - "traefik.http.routers.immich-server.entrypoints=websecure"
-        - "traefik.http.routers.immich-server.tls=true"
-        - "traefik.http.routers.immich-server.tls.certresolver=letencrypt"
-        - "traefik.http.services.immich-server.loadbalancer.server.port=3000"
+        - "traefik.http.routers.gitea.rule=Host(`gitea.lucasmasse.net`)"
+        - "traefik.http.routers.gitea.entrypoints=websecure"
+        - "traefik.http.routers.gitea.tls=true"
+        - "traefik.http.routers.gitea.tls.certresolver=letencrypt"
+        - "traefik.http.services.gitea.loadbalancer.server.port=3000"
+        - "traefik.docker.network=frontend"
     restart: always
     volumes:
-      - ./gitea:/data
+      - /data/portainer/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -53,4 +57,45 @@ services:
     networks:
       - gitea
     volumes:
-     - ./mysql:/var/lib/mysql
+     - /data/portainer/gitea/mysql:/var/lib/mysql
+
+  # Runner
+  runner:
+    image: docker.io/gitea/act_runner:nightly
+    environment:
+      CONFIG_FILE: /config.yaml
+      GITEA_INSTANCE_URL: "http://gitea:3000"
+      GITEA_RUNNER_REGISTRATION_TOKEN: "${REGISTRATION_TOKEN}"
+      GITEA_RUNNER_NAME: "${RUNNER_NAME}"
+      GITEA_RUNNER_LABELS: "${RUNNER_LABELS}"
+    volumes:
+      - /data/portainer/gitea/runner/config.yaml:/config.yaml
+      - /data/portainer/gitea/runner/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/www/quartz:/var/www/quartz
+    depends_on:
+      - server
+    networks:
+      - gitea_services
+
+  nginx-pages:
+    image: nginx
+    volumes:
+      - /data/portainer/gitea/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /var/www/quartz:/usr/share/nginx/html:ro
+    #  - ./templates:/etc/nginx/templates
+    environment:
+      - NGINX_HOST=portfolio.lucasmasse.net
+      - NGINX_PORT=80
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.nginx-pages.rule=Host(`portfolio.lucasmasse.net`)"
+        - "traefik.http.routers.nginx-pages.entrypoints=websecure"
+        - "traefik.http.routers.nginx-pages.tls=true"
+        - "traefik.http.routers.nginx-pages.tls.certresolver=letencrypt"
+        - "traefik.http.services.nginx-pages.loadbalancer.server.port=80"
+    networks:
+      - frontend
+
+
+    

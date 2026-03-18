@@ -1,0 +1,27 @@
+services:
+  webdav:
+    image: dgraziotin/nginx-webdav-nononsense:latest
+    container_name: webdav
+    restart: unless-stopped
+    environment:
+      - WEBDAV_USERNAME=${WEBDAV_USERNAME}
+      - WEBDAV_PASSWORD=${WEBDAV_PASSWORD}
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - CLIENT_MAX_BODY_SIZE=10G
+    volumes:
+      - /data/portainer/webdav:/data
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webdav.rule=Host(`webdav.lucasmasse.net`)"
+      - "traefik.http.routers.webdav.entrypoints=websecure"
+      - "traefik.http.routers.webdav.tls=true"
+      - "traefik.http.routers.webdav.tls.certresolver=letencrypt"
+      - "traefik.http.services.webdav.loadbalancer.server.port=80"
+
+networks:
+  frontend:
+    external: true
