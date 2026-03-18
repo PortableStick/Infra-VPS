@@ -1,0 +1,100 @@
+services:
+
+  affine:
+    image: ghcr.io/toeverything/affine:stable
+    container_name: affine
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      affine_migration:
+        condition: service_completed_successfully
+    volumes:
+      - /data/portainer/affine/storage:/root/.affine/storage
+      - /data/portainer/affine/config:/root/.affine/config
+    environment:
+      - REDIS_SERVER_HOST=redis
+      - DATABASE_URL=postgresql://${AFFINE_DB_USER}:${AFFINE_DB_PASSWORD}@postgres:5432/${AFFINE_DB_NAME}
+      - NODE_ENV=production
+      - AFFINE_SERVER_EXTERNAL_URL=https://notes.lucasmasse.net
+      - AFFINE_SERVER_HTTPS=true
+      - AFFINE_ADMIN_EMAIL=${AFFINE_ADMIN_EMAIL}
+      - AFFINE_ADMIN_PASSWORD=${AFFINE_ADMIN_PASSWORD}
+      - AFFINE_INDEXER_ENABLED=false
+    networks:
+      - frontend
+      - affine_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.affine.rule=Host(`notes.lucasmasse.net`)"
+      - "traefik.http.routers.affine.entrypoints=websecure"
+      - "traefik.http.routers.affine.tls=true"
+      - "traefik.http.routers.affine.tls.certresolver=letencrypt"
+      - "traefik.http.services.affine.loadbalancer.server.port=3010"
+      # WebSocket support
+      - "traefik.http.middlewares.affine-ws.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.middlewares.affine-ws.headers.customrequestheaders.Connection=Upgrade"
+      - "traefik.http.routers.affine.middlewares=affine-ws"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+
+  affine_migration:
+    image: ghcr.io/toeverything/affine:stable
+    container_name: affine_migration
+    restart: no
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - /data/portainer/affine/storage:/root/.affine/storage
+      - /data/portainer/affine/config:/root/.affine/config
+    command: ["sh", "-c", "node ./scripts/self-host-predeploy.js"]
+    environment:
+      - REDIS_SERVER_HOST=redis
+      - DATABASE_URL=postgresql://${AFFINE_DB_USER}:${AFFINE_DB_PASSWORD}@postgres:5432/${AFFINE_DB_NAME}
+    networks:
+      - affine_internal
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: affine_postgres
+    restart: unless-stopped
+    volumes:
+      - /data/portainer/affine/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${AFFINE_DB_USER}
+      - POSTGRES_PASSWORD=${AFFINE_DB_PASSWORD}
+      - POSTGRES_DB=${AFFINE_DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AFFINE_DB_USER} -d ${AFFINE_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - affine_internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: affine_redis
+    restart: unless-stopped
+    volumes:
+      - /data/portainer/affine/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - affine_internal
+
+networks:
+  frontend:
+    external: true
+  affine_internal:
+    internal: true
